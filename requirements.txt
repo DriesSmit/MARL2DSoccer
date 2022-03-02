@@ -1,0 +1,6 @@
+numpy==1.22.2
+acme==1.24.0
+dm-env==1.5
+dm-acme==0.4.0
+tensorflow==2.8.0
+pygame==2.1.2
