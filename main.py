@@ -1,7 +1,7 @@
 from env_wrapper import FootballEnvWrapper
 from fixed_agent import NaiveTeamAttentionBot
 
-# Import the football environment.
+# Initialise the football environment
 football_env = FootballEnvWrapper(num_per_team=11, render=True, include_wait=True)
 
 while True:
