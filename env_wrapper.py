@@ -35,9 +35,6 @@ class FootballEnvWrapper:
         # Don't change the game length again.
         self._environment.game_type = "fixed"
 
-    def update_screen(self):
-        self._environment._update_screen()
-
     def get_game_length(self):
         return self._environment.game_length
 

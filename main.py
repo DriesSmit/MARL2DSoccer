@@ -19,8 +19,5 @@ while True:
         for a_i in range(len(teams)):
             actions.extend(teams[a_i].get_action(observations[a_i], states[a_i], add_to_memory=False))
 
-        # Update the football screen
-        football_env.update_screen()
-
         # Environment steps
         observations, _, rewards, done = football_env.step(actions)
