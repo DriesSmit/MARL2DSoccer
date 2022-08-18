@@ -1,6 +1,84 @@
 import numpy as np
 from custom_football_env import dist
 
+class RandBot(object):
+    def __init__(self):
+        pass
+    def observe_after(self, reward, action=None):
+        pass
+    def reset_brain(self):
+        pass
+    def get_action(self, observations, states=None, add_to_memory=False):
+        num_actions = len(observations[0])
+        actions_list = []
+        for _ in range(num_actions):
+            actions = np.random.uniform(-1.0, 1.0, 2).astype(np.float32)
+            actions_list.append(actions)
+        return actions_list
+
+class NaiveAttentionBot(object):
+    def __init__(self, bot_diff=1.0):
+        self._bot_diff = bot_diff
+
+    def observe_after(self, reward, action=None):
+        pass
+
+    def reset_brain(self):
+        pass
+
+    def get_action(self, all_observations, states=None, add_to_memory=False):
+        observations = all_observations[0]
+        num_actions = len(observations)
+        actions_list = []
+        for a_i in range(num_actions):
+            player_obs = observations[a_i]
+            agent_x, agent_y, rad_x, rad_y = player_obs[1:5]
+            see_ball, ball_x_rad, ball_y_rad = player_obs[-5:-2]
+            ball_dist = np.linalg.norm(np.array([ball_x_rad, ball_y_rad]))
+            ball_dir = np.arctan2(ball_y_rad, ball_x_rad)
+
+            a_dict = {"move": 0, "rot": 1}
+            actions = np.zeros(2, dtype=np.float32)
+            if see_ball > 0.5:
+                actions[a_dict["move"]] = 1.0
+                deg_diff = ball_dir
+
+                if ball_dist < 0.04:
+                    actions[a_dict["move"]] = 1.0
+                    targ_rot_y = 0 - agent_y
+                    targ_rot_x = 1 - agent_x
+                    target_rot = np.arctan2(targ_rot_y, targ_rot_x)
+                    agent_rot = np.arctan2(rad_y, rad_x)
+                    deg_diff = target_rot - agent_rot
+
+            else:
+                actions[a_dict["move"]] = -1.0
+                targ_rot_y = 0 - agent_y
+                targ_rot_x = 1 - agent_x
+                target_rot = np.arctan2(targ_rot_y, targ_rot_x)
+                agent_rot = np.arctan2(rad_y, rad_x)
+                deg_diff = target_rot - agent_rot
+
+            if deg_diff > np.pi:
+                deg_diff -= 2 * np.pi
+            elif deg_diff < -np.pi:
+                deg_diff += 2 * np.pi
+
+            rot_speed = -deg_diff
+
+            if rot_speed > 1:
+                rot_speed = 1
+            elif rot_speed < -1:
+                rot_speed = -1
+
+            actions[a_dict["rot"]] = rot_speed
+            if np.random.uniform(0, 1) < 1.0-self._bot_diff:
+                actions[a_dict["move"]] = np.random.uniform(-1.0, 1.0)
+                actions[a_dict["rot"]] = np.random.uniform(-1.0, 1.0)
+            actions_list.append(actions)
+
+        return actions_list
+
 class NaiveTeamAttentionBot(object):
     def __init__(self, bot_diff=1.0):
         # self._agent_num = agent_num
