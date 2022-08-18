@@ -76,7 +76,6 @@ class NaiveAttentionBot(object):
                 actions[a_dict["move"]] = np.random.uniform(-1.0, 1.0)
                 actions[a_dict["rot"]] = np.random.uniform(-1.0, 1.0)
             actions_list.append(actions)
-
         return actions_list
 
 class NaiveTeamAttentionBot(object):
